@@ -22,6 +22,8 @@ SYSSIZE = 0x3000
 ! read errors will result in a unbreakable loop. Reboot by hand. It
 ! loads pretty fast by getting whole sectors at a time whenever possible.
 
+! 引导扇区代码
+
 .globl begtext, begdata, begbss, endtext, enddata, endbss
 .text
 begtext:
@@ -43,6 +45,7 @@ ENDSEG   = SYSSEG + SYSSIZE		! where to stop loading
 ROOT_DEV = 0x306
 
 entry start
+! 从BOOTSEG复制引导扇区到 INITSEG
 start:
 	mov	ax,#BOOTSEG
 	mov	ds,ax
@@ -53,17 +56,20 @@ start:
 	sub	di,di
 	rep
 	movw
+! 从引导扇区新位置接着执行
 	jmpi	go,INITSEG
+! 调整DS,ES,SS = CS
 go:	mov	ax,cs
 	mov	ds,ax
 	mov	es,ax
+! 调整栈指针
 ! put stack at 0x9ff00.
 	mov	ss,ax
 	mov	sp,#0xFF00		! arbitrary value >>512
 
 ! load the setup-sectors directly after the bootblock.
 ! Note that 'es' is already set up.
-
+! 复制磁盘的setup的4个扇区到内存
 load_setup:
 	mov	dx,#0x0000		! drive 0, head 0
 	mov	cx,#0x0002		! sector 2, track 0
@@ -148,6 +154,7 @@ sread:	.word 1+SETUPLEN	! sectors read of current track
 head:	.word 0			! current head
 track:	.word 0			! current track
 
+! 加载system模块
 read_it:
 	mov ax,es
 	test ax,#0x0fff
@@ -246,6 +253,7 @@ msg1:
 	.ascii "Loading system ..."
 	.byte 13,10,13,10
 
+! 508即为0x1FC，当前段是 0x9000，所以地址是0x901FC
 .org 508
 root_dev:
 	.word ROOT_DEV
