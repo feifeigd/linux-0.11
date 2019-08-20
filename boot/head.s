@@ -13,6 +13,7 @@
  */
 .text
 .globl _idt,_gdt,_pg_dir,_tmp_floppy_area
+! 物理内存起始位置 0x000000
 _pg_dir:
 startup_32:
 	movl $0x10,%eax
@@ -20,7 +21,7 @@ startup_32:
 	mov %ax,%es
 	mov %ax,%fs
 	mov %ax,%gs
-	lss _stack_start,%esp
+	lss _stack_start,%esp	# stack_start 在kernel/sched.c中定义，stack_start低32位复制给%esp,高16位复制给%ss
 	call setup_idt
 	call setup_gdt
 	movl $0x10,%eax		# reload all the segment registers
@@ -215,7 +216,7 @@ setup_paging:
 	movl %cr0,%eax
 	orl $0x80000000,%eax
 	movl %eax,%cr0		/* set paging (PG) bit */
-	ret			/* this also flushes prefetch-queue */
+	ret			/* this also flushes prefetch-queue */ /* return之后开始指向main函数*/
 
 .align 2
 .word 0

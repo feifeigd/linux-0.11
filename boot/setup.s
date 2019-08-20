@@ -27,6 +27,7 @@ begdata:
 begbss:
 .text
 
+! 加载机器系统数据
 entry start
 start:
 
@@ -38,29 +39,29 @@ start:
 	mov	ah,#0x03	! read cursor pos
 	xor	bh,bh
 	int	0x10		! save it in known place, con_init fetches
-	mov	[0],dx		! it from 0x90000.
+	mov	[0],dx		! it from 0x90000.	! 光标位置
 
 ! Get memory size (extended mem, kB)
 
 	mov	ah,#0x88
 	int	0x15
-	mov	[2],ax
+	mov	[2],ax	! 扩展内存数：系统从1MB开始的扩展内存数值 KB
 
 ! Get video-card data:
 
 	mov	ah,#0x0f
 	int	0x10
-	mov	[4],bx		! bh = display page
-	mov	[6],ax		! al = video mode, ah = window width
+	mov	[4],bx		! bh = display page 当前显示页面
+	mov	[6],ax		! al = video mode 显示模式, ah = window width 字符列数
 
 ! check for EGA/VGA and some config parameters
 
 	mov	ah,#0x12
 	mov	bl,#0x10
 	int	0x10
-	mov	[8],ax
-	mov	[10],bx
-	mov	[12],cx
+	mov	[8],ax	! ??
+	mov	[10],bx	! 显示内存
+	mov	[12],cx	! 显示状态
 
 ! Get hd0 data
 
@@ -106,7 +107,7 @@ is_disk1:
 
 ! now we want to move to protected mode ...
 
-	cli			! no interrupts allowed !
+	cli			! no interrupts allowed ! 关闭中断，即将EFLAGS的IF设置为0
 
 ! first we move the system to it's rightful place
 

@@ -69,7 +69,7 @@ long user_stack [ PAGE_SIZE>>2 ] ;
 struct {
 	long * a;
 	short b;
-	} stack_start = { & user_stack [PAGE_SIZE>>2] , 0x10 };
+	} stack_start = { & user_stack [PAGE_SIZE>>2] , 0x10 };	// 48位数，低32给寄存器，高16位给对应的段寄存器，stack_start 指向 user_stack 的最末位置
 /*
  *  'math_state_restore()' saves the current math information in the
  * old math state array, and gets the new ones from the current task

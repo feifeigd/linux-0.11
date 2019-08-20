@@ -27,6 +27,7 @@ DRIVERS =kernel/blk_drv/blk_drv.a kernel/chr_drv/chr_drv.a
 MATH	=kernel/math/math.a
 LIBS	=lib/lib.a
 
+# *.c 编译生成 *.s
 .c.s:
 	$(CC) $(CFLAGS) \
 	-nostdinc -Iinclude -S -o $*.s $<
