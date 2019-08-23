@@ -55,7 +55,7 @@ extern long startup_time;
 /*
  * This is set up by the setup-routine at boot-time
  */
-#define EXT_MEM_K (*(unsigned short *)0x90002)
+#define EXT_MEM_K (*(unsigned short *)0x90002)	// 扩展内存(KB)
 #define DRIVE_INFO (*(struct drive_info *)0x90080)
 #define ORIG_ROOT_DEV (*(unsigned short *)0x901FC)
 
@@ -96,8 +96,8 @@ static void time_init(void)
 }
 
 static long memory_end = 0;
-static long buffer_memory_end = 0;
-static long main_memory_start = 0;
+static long buffer_memory_end = 0;	// 缓冲区末端位置
+static long main_memory_start = 0;	// 缓冲区之后就是主内存
 
 struct drive_info { char dummy[32]; } drive_info;
 
@@ -107,34 +107,36 @@ void main(void)		/* This really IS void, no error here. */
  * Interrupts are still disabled. Do necessary setups, then
  * enable them
  */
- 	ROOT_DEV = ORIG_ROOT_DEV;
- 	drive_info = DRIVE_INFO;
-	memory_end = (1<<20) + (EXT_MEM_K<<10);
-	memory_end &= 0xfffff000;
+ 	ROOT_DEV = ORIG_ROOT_DEV;	// fs/super.c
+ 	drive_info = DRIVE_INFO;	// 32字节
+	memory_end = (1<<20) + (EXT_MEM_K<<10);	// 1 MB + EXT_MEM_K KB
+	memory_end &= 0xfffff000;	// 4KB 对齐，不足一页的忽略
 	if (memory_end > 16*1024*1024)
-		memory_end = 16*1024*1024;
+		memory_end = 16*1024*1024;	// 最大16MB
+	
 	if (memory_end > 12*1024*1024) 
 		buffer_memory_end = 4*1024*1024;
 	else if (memory_end > 6*1024*1024)
 		buffer_memory_end = 2*1024*1024;
 	else
 		buffer_memory_end = 1*1024*1024;
+	
 	main_memory_start = buffer_memory_end;
-#ifdef RAMDISK
-	main_memory_start += rd_init(main_memory_start, RAMDISK*1024);
+#ifdef RAMDISK	// Makefile中定义 RAMDISK = 512
+	main_memory_start += rd_init(main_memory_start, RAMDISK*1024);	// 初始化虚拟盘
 #endif
-	mem_init(main_memory_start,memory_end);
-	trap_init();
-	blk_dev_init();
-	chr_dev_init();
-	tty_init();
-	time_init();
-	sched_init();
-	buffer_init(buffer_memory_end);
-	hd_init();
-	floppy_init();
-	sti();
-	move_to_user_mode();
+	mem_init(main_memory_start,memory_end);	// 初始化内存
+	trap_init();	// 初始化中断/异常处理的服务程序
+	blk_dev_init();	// 
+	chr_dev_init();	// 
+	tty_init();		// 
+	time_init();	// 
+	sched_init();	//
+	buffer_init(buffer_memory_end);	// 
+	hd_init();	// 
+	floppy_init();	// 
+	sti();	// 
+	move_to_user_mode();	// 
 	if (!fork()) {		/* we count on this going ok */
 		init();
 	}

@@ -13,12 +13,15 @@ __asm__ ("movl %%esp,%%eax\n\t" \
 	"movw %%ax,%%gs" \
 	:::"ax")
 
+// 冒号汇编格式 汇编指令:输出:输入:修饰寄存器列表
 #define sti() __asm__ ("sti"::)
 #define cli() __asm__ ("cli"::)
 #define nop() __asm__ ("nop"::)
 
 #define iret() __asm__ ("iret"::)
 
+// "i" : 允许一个（带有常量）的立即整形操作数。这包括其值仅在汇编时期知道的符号常量。
+// "o" : 允许一个内存操作数，但只有当地址是可偏移的。即，该地址加上一个小的偏移量可以得到一个有效地址。
 #define _set_gate(gate_addr,type,dpl,addr) \
 __asm__ ("movw %%dx,%%ax\n\t" \
 	"movw %0,%%dx\n\t" \
@@ -30,12 +33,14 @@ __asm__ ("movw %%dx,%%ax\n\t" \
 	"o" (*(4+(char *) (gate_addr))), \
 	"d" ((char *) (addr)),"a" (0x00080000))
 
+// 14=0xE，386中断门
 #define set_intr_gate(n,addr) \
 	_set_gate(&idt[n],14,0,addr)
 
 #define set_trap_gate(n,addr) \
 	_set_gate(&idt[n],15,0,addr)
 
+// ring3级
 #define set_system_gate(n,addr) \
 	_set_gate(&idt[n],15,3,addr)
 
