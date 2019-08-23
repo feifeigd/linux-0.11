@@ -127,9 +127,9 @@ void main(void)		/* This really IS void, no error here. */
 #endif
 	mem_init(main_memory_start,memory_end);	// 初始化内存
 	trap_init();	// 初始化中断/异常处理的服务程序
-	blk_dev_init();	// 
+	blk_dev_init();	// 初始化块设备
 	chr_dev_init();	// 
-	tty_init();		// 
+	tty_init();		// 初始化字符设备
 	time_init();	// 
 	sched_init();	//
 	buffer_init(buffer_memory_end);	// 

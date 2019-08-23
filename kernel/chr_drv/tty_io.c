@@ -104,8 +104,8 @@ struct tty_queue * table_list[]={
 
 void tty_init(void)
 {
-	rs_init();
-	con_init();
+	rs_init();	// 对串口进行设置
+	con_init();	// 对键盘进行设置
 }
 
 void tty_intr(struct tty_struct * tty, int mask)
@@ -344,6 +344,7 @@ void do_tty_interrupt(int tty)
 	copy_to_cooked(tty_table+tty);
 }
 
+// 空函数
 void chr_dev_init(void)
 {
 }
