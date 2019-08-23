@@ -355,21 +355,24 @@ void buffer_init(long buffer_end)
 		b = (void *) (640*1024);
 	else
 		b = (void *) buffer_end;
-	while ( (b -= BLOCK_SIZE) >= ((void *) (h+1)) ) {
+
+	// h/b分别从缓冲区的低地址和高地址端开始，每次对进buffer_head/缓冲块各一个
+	// 忽略剩余不足一对 buffer_head/缓冲块 的空间
+	while ( (b -= BLOCK_SIZE) >= ((void *) (h+1)) ) {	// 只要内存不重叠，就一直搞
 		h->b_dev = 0;
 		h->b_dirt = 0;
 		h->b_count = 0;
 		h->b_lock = 0;
 		h->b_uptodate = 0;
 		h->b_wait = NULL;
-		h->b_next = NULL;
+		h->b_next = NULL;	// 这两项初始化为空，后续使用将与hash_table挂接
 		h->b_prev = NULL;
-		h->b_data = (char *) b;
-		h->b_prev_free = h-1;
+		h->b_data = (char *) b;	// 每个buffer_head关联一个缓冲块
+		h->b_prev_free = h-1;	// 这两项使buffer_head分别与前/后buffer_head挂接，形成双链表
 		h->b_next_free = h+1;
 		h++;
 		NR_BUFFERS++;
-		if (b == (void *) 0x100000)
+		if (b == (void *) 0x100000)	// 避开ROMBIOS&VGA
 			b = (void *) 0xA0000;
 	}
 	h--;

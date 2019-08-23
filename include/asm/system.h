@@ -67,5 +67,5 @@ __asm__ ("movw $104,%1\n\t" \
 	 "m" (*(n+5)), "m" (*(n+6)), "m" (*(n+7)) \
 	)
 
-#define set_tss_desc(n,addr) _set_tssldt_desc(((char *) (n)),addr,"0x89")
-#define set_ldt_desc(n,addr) _set_tssldt_desc(((char *) (n)),addr,"0x82")
+#define set_tss_desc(n,addr) _set_tssldt_desc(((char *) (n)),addr,"0x89")	// 0x89 对应tss
+#define set_ldt_desc(n,addr) _set_tssldt_desc(((char *) (n)),addr,"0x82")	// 0x82 对应ldt
