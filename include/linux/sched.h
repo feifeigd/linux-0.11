@@ -77,8 +77,8 @@ struct tss_struct {
 
 struct task_struct {
 /* these are hardcoded - don't touch */
-	long state;	/* -1 unrunnable, 0 runnable, >0 stopped */
-	long counter;
+	long state;	/* -1 unrunnable, 0 runnable, >0 stopped */	// 0就绪态
+	long counter;	// 多少个时间片
 	long priority;
 	long signal;
 	struct sigaction sigaction[32];
@@ -86,7 +86,7 @@ struct task_struct {
 /* various fields */
 	int exit_code;
 	unsigned long start_code,end_code,end_data,brk,start_stack;
-	long pid,father,pgrp,session,leader;
+	long pid,father,pgrp,session,leader;	// pid进程号
 	unsigned short uid,euid,suid;
 	unsigned short gid,egid,sgid;
 	long alarm;
@@ -148,7 +148,7 @@ extern void wake_up(struct task_struct ** p);
 
 /*
  * Entry into gdt where to find first TSS. 0-nul, 1-cs, 2-ds, 3-syscall
- * 4-TSS0, 5-LDT0, 6-TSS1 etc ...
+ * 4-TSS0, 5-LDT0, 6-TSS1, 7-LDT1, 8-TSS2 etc ...
  */
 #define FIRST_TSS_ENTRY 4
 #define FIRST_LDT_ENTRY (FIRST_TSS_ENTRY+1)
