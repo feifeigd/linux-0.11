@@ -26,7 +26,7 @@
 #include <asm/system.h>
 #include <asm/io.h>
 
-extern int end;
+extern int end;	// 内核代码末端的地址
 struct buffer_head * start_buffer = (struct buffer_head *) &end;
 struct buffer_head * hash_table[NR_HASH];
 static struct buffer_head * free_list;

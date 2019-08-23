@@ -1,7 +1,10 @@
 #ifndef _BLK_H
 #define _BLK_H
 
-#define NR_BLK_DEV	7
+// 块设备
+
+#define NR_BLK_DEV	7	// 块设备个数
+
 /*
  * NR_REQUEST is the number of entries in the request-queue.
  * NOTE that writes may use only the low 2/3 of these: reads
@@ -29,7 +32,7 @@ struct request {
 	char * buffer;
 	struct task_struct * waiting;
 	struct buffer_head * bh;
-	struct request * next;
+	struct request * next;	// 说明request可以构成链表
 };
 
 /*
