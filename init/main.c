@@ -133,11 +133,11 @@ void main(void)		/* This really IS void, no error here. */
 	chr_dev_init();	// 
 	tty_init();		// 初始化字符设备
 	time_init();	// 初始化时间
-	sched_init();	//
-	buffer_init(buffer_memory_end);	// 
-	hd_init();	// 
-	floppy_init();	// 
-	sti();	// 
+	sched_init();	// 初始化进程0
+	buffer_init(buffer_memory_end);	// 初始化缓冲区管理结构
+	hd_init();		// 初始化硬盘
+	floppy_init();	// 初始化软盘
+	sti();	// 此时，系统中所有中断服务重新都已经和IDT正常挂接，这意味着中断服务体系已经构建完毕，系统可以在32位保护模式下处理中断，重要意义之一是可以使用系统调用。开启中断
 	move_to_user_mode();	// 
 	if (!fork()) {		/* we count on this going ok */
 		init();
